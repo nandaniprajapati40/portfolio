@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nandani Prajapati - Data Science & AI Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap');
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #06b6d4;
+            --accent-2: #3b82f6;
+            --accent-3: #8b5cf6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+        }
+
+        body {
+            background: var(--primary);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+            position: relative;
+        }
+
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero-gradient::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .skill-badge {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .skill-badge:hover {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(6, 182, 212, 0.2);
+        }
+
+        .project-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 12px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.15);
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .timeline-item.active::before {
+            background: var(--accent-3);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(6, 182, 212, 0.1);
+            border-radius: 12px;
+        }
+
+        .experience-badge {
+            background: linear-gradient(135deg, var(--accent-2), var(--accent));
+            padding: 2px;
+            border-radius: 8px;
+        }
+
+        .experience-badge > div {
+            background: var(--primary);
+            border-radius: 6px;
+            padding: 6px 12px;
+        }
+
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .project-card {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="fixed top-0 left-0 right-0 z-50 glass-effect" v-if="showNav">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                        NP
+                    </div>
+                    <div class="hidden md:flex space-x-8">
+                        <a href="#home" class="nav-link hover:text-cyan-400">Home</a>
+                        <a href="#about" class="nav-link hover:text-cyan-400">About</a>
+                        <a href="#skills" class="nav-link hover:text-cyan-400">Skills</a>
+                        <a href="#projects" class="nav-link hover:text-cyan-400">Projects</a>
+                        <a href="#experience" class="nav-link hover:text-cyan-400">Experience</a>
+                        <a href="#contact" class="nav-link hover:text-cyan-400">Contact</a>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-cyan-400 transition"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="hover:text-cyan-400 transition"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="home" class="hero-gradient pt-32 pb-20 px-4 relative min-h-screen flex items-center">
+            <div class="max-w-6xl mx-auto w-full relative z-10">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="animate-fade-in-up">
+                        <div class="text-cyan-400 text-lg font-semibold mb-4 flex items-center">
+                            <span class="w-12 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent mr-3"></span>
+                            Welcome to my portfolio
+                        </div>
+                        <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                            <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+                                Nandani Prajapati
+                            </span>
+                        </h1>
+                        <p class="text-xl text-slate-300 mb-6 leading-relaxed">
+                            Data Science & AI Specialist | Machine Learning Engineer | Backend Developer
+                        </p>
+                        <p class="text-slate-400 mb-8 text-lg">
+                            Building intelligent, scalable solutions using ML, NLP, and geospatial technologies. Passionate about transforming data into actionable insights.
+                        </p>
+                        <div class="flex gap-4 flex-wrap">
+                            <a href="#projects" class="cta-button px-8 py-4 rounded-lg font-semibold text-white relative">
+                                View My Work
+                            </a>
+                            <a href="#contact" class="px-8 py-4 rounded-lg font-semibold border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 transition">
+                                Get in Touch
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex justify-center">
+                        <div class="relative w-72 h-72">
+                            <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl rotate-6 opacity-25"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl -rotate-6 opacity-25"></div>
+                            <div class="relative inset-0 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl flex items-center justify-center">
+                                <div class="text-6xl">🚀</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 scroll-indicator">
+                    <i class="fas fa-chevron-down text-cyan-400 text-2xl"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title mb-4">About Me</h2>
+                    <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="stat-box">
+                        <div class="text-4xl font-bold text-cyan-400 mb-2">2+</div>
+                        <p class="text-slate-300">Years Experience</p>
+                    </div>
+                    <div class="stat-box">
+                        <div class="text-4xl font-bold text-blue-500 mb-2">15+</div>
+                        <p class="text-slate-300">Projects Completed</p>
+                    </div>
+                    <div class="stat-box">
+                        <div class="text-4xl font-bold text-purple-500 mb-2">∞</div>
+                        <p class="text-slate-300">Knowledge Pursuit</p>
+                    </div>
+                </div>
+
+                <div class="glass-effect p-8 md:p-12 rounded-xl">
+                    <p class="text-lg text-slate-300 leading-relaxed mb-4">
+                        I'm a Data Science postgraduate with deep expertise in Machine Learning, NLP, and backend development. My passion lies in designing scalable systems and leveraging intelligent models to solve real-world problems.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed mb-4">
+                        Currently working as a Research Intern at IIRS, ISRO, where I'm pioneering geospatial AI solutions for agricultural applications. My technical toolkit spans Python, Flask, TensorFlow, and advanced GIS technologies.
+                    </p>
+                    <p class="text-lg text-slate-300 leading-relaxed">
+                        When I'm not coding or analyzing data, I'm exploring emerging technologies in AI and contributing to the open-source community.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title mb-4">Technical Skills</h2>
+                    <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="(category, index) in skillCategories" :key="index" class="animate-fade-in-up" :style="{ animationDelay: `${index * 0.1}s` }">
+                        <h3 class="text-xl font-bold text-cyan-400 mb-4 flex items-center">
+                            <i :class="category.icon" class="mr-3 text-2xl"></i>
+                            {{ category.name }}
+                        </h3>
+                        <div class="space-y-3">
+                            <div v-for="skill in category.skills" :key="skill" class="skill-badge p-3 rounded-lg">
+                                <span class="text-slate-300">{{ skill }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title mb-4">Featured Projects</h2>
+                    <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div v-for="(project, index) in projects" :key="index" class="project-card p-8 animate-fade-in-up" :style="{ animationDelay: `${index * 0.15}s` }">
+                        <div class="flex items-start justify-between mb-4">
+                            <h3 class="text-2xl font-bold text-cyan-400">{{ project.title }}</h3>
+                            <span class="experience-badge">
+                                <div class="text-sm font-semibold">{{ project.period }}</div>
+                            </span>
+                        </div>
+                        <p class="text-slate-400 mb-6">{{ project.description }}</p>
+                        <div class="mb-6">
+                            <p class="text-sm text-slate-500 font-semibold mb-3">TECHNOLOGIES</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="tech in project.tech" :key="tech" class="px-3 py-1 bg-slate-800 rounded-full text-xs text-cyan-300">
+                                    {{ tech }}
+                                </span>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-slate-300 text-sm">
+                            <li v-for="point in project.highlights" :key="point" class="flex items-start">
+                                <span class="text-cyan-400 mr-3 mt-1">→</span>
+                                <span>{{ point }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-20 px-4 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="section-title mb-4">Experience & Internships</h2>
+                    <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto"></div>
+                </div>
+
+                <div class="space-y-8">
+                    <div v-for="(exp, index) in experiences" :key="index" class="timeline-item glass-effect p-8 animate-fade-in-up" :style="{ animationDelay: `${index * 0.1}s` }">
+                        <div class="flex items-start justify-between mb-3">
+                            <h3 class="text-2xl font-bold text-cyan-400">{{ exp.title }}</h3>
+                            <span class="text-sm text-slate-400">{{ exp.period }}</span>
+                        </div>
+                        <p class="text-slate-300 font-semibold mb-4">{{ exp.company }}</p>
+                        <ul class="space-y-2 text-slate-400">
+                            <li v-for="desc in exp.description" :key="desc" class="flex items-start">
+                                <span class="text-cyan-400 mr-3 mt-1">▪</span>
+                                <span>{{ desc }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 px-4 relative">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="section-title mb-4">Let's Connect</h2>
+                    <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 mx-auto"></div>
+                </div>
+
+                <div class="glass-effect p-12 rounded-xl text-center">
+                    <p class="text-slate-300 text-lg mb-8">
+                        I'm always interested in hearing about new projects and opportunities. Feel free to reach out!
+                    </p>
+                    <div class="flex flex-col md:flex-row gap-6 justify-center mb-8">
+                        <a href="tel:+919329391862" class="cta-button px-8 py-4 rounded-lg font-semibold text-white flex items-center justify-center gap-2">
+                            <i class="fas fa-phone"></i> Call Me
+                        </a>
+                        <a href="mailto:nandaniprajapati0104@gmail.com" class="cta-button px-8 py-4 rounded-lg font-semibold text-white flex items-center justify-center gap-2">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        <a href="https://www.linkedin.com/in/nandani-prajapati-7ab229282" class="px-8 py-4 rounded-lg font-semibold border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-slate-900 transition flex items-center justify-center gap-2">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </a>
+                    </div>
+                    <div class="text-slate-400 text-sm">
+                        <p>📧 nandaniprajapati0104@gmail.com</p>
+                        <p>📱 +91 9329391862</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t border-slate-700 py-8 px-4 mt-20">
+            <div class="max-w-6xl mx-auto text-center text-slate-500 text-sm">
+                <p>© 2026 Nandani Prajapati. Crafted with passion & code.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    showNav: true,
+                    skillCategories: [
+                        {
+                            name: 'Programming Languages',
+                            icon: 'fas fa-code',
+                            skills: ['Python', 'SQL', 'JavaScript']
+                        },
+                        {
+                            name: 'Machine Learning',
+                            icon: 'fas fa-brain',
+                            skills: ['TensorFlow', 'Scikit-learn', 'NLP', 'Deep Learning', 'Model Evaluation']
+                        },
+                        {
+                            name: 'Frameworks & Libraries',
+                            icon: 'fas fa-cube',
+                            skills: ['Flask', 'NumPy', 'Pandas', 'Matplotlib', 'LangChain', 'OpenAI']
+                        },
+                        {
+                            name: 'Geospatial & Data',
+                            icon: 'fas fa-map',
+                            skills: ['Google Earth Engine', 'GeoServer', 'QGIS', 'Remote Sensing', 'MongoDB', 'MySQL']
+                        },
+                        {
+                            name: 'Tools & Platforms',
+                            icon: 'fas fa-tools',
+                            skills: ['Git/GitHub', 'VS Code', 'Jupyter', 'Power BI', 'Linux', 'Windows']
+                        },
+                        {
+                            name: 'Soft Skills',
+                            icon: 'fas fa-handshake',
+                            skills: ['Problem Solving', 'Team Collaboration', 'Analytical Thinking', 'Leadership']
+                        }
+                    ],
+                    projects: [
+                        {
+                            title: 'Irrigation Crop Water Requirements',
+                            period: 'Jan 2026 - Present',
+                            description: 'IIRS-ISRO Project: Satellite-driven system for crop water estimation',
+                            tech: ['Google Earth Engine', 'GeoServer', 'Remote Sensing', 'Python', 'Flask'],
+                            highlights: [
+                                'Pioneered satellite-driven system using remote sensing data',
+                                'Leveraged GEE for large-scale geospatial processing',
+                                'Automated real-time irrigation recommendations',
+                                'Designed web and mobile applications for farmers'
+                            ]
+                        },
+                        {
+                            title: 'AI-Powered Audiobook Generation',
+                            period: 'Feb 2026 - Mar 2026',
+                            description: 'End-to-end GenAI pipeline converting ebooks to natural-sounding audiobooks',
+                            tech: ['LLM', 'TTS', 'Flask', 'MongoDB', 'FFmpeg', 'Python'],
+                            highlights: [
+                                'Implemented LLM-based text cleaning and neural TTS',
+                                'Deployed scalable text chunking for parallel processing',
+                                'Flask backend with MongoDB for async processing',
+                                'Efficient media generation and job tracking'
+                            ]
+                        },
+                        {
+                            title: 'D-CAM Therapy Center Management',
+                            period: 'Oct 2025 - Nov 2025',
+                            description: 'Full-stack web application for appointment and patient management',
+                            tech: ['Flask', 'MongoDB', 'Python', 'REST APIs', 'RBAC'],
+                            highlights: [
+                                'Streamlined appointment scheduling workflows',
+                                'Secure role-based access control system',
+                                'Optimized MongoDB data models',
+                                'RESTful API design and scalability'
+                            ]
+                        },
+                        {
+                            title: 'Domain-Specific Chatbot (RAG)',
+                            period: 'Apr 2025 - Jun 2025',
+                            description: 'LLM-powered chatbot with semantic search and context-aware responses',
+                            tech: ['LangChain', 'OpenAI', 'MongoDB', 'Vector Search', 'Python'],
+                            highlights: [
+                                'Engineered RAG-based chatbot using LangChain',
+                                'Semantic search with MongoDB-based retrieval',
+                                'Context-aware response generation',
+                                'Efficient indexing for improved latency'
+                            ]
+                        },
+                        {
+                            title: 'Multimodal Emotion Detection System',
+                            period: 'Feb 2025 - Mar 2025',
+                            description: 'Deep learning system analyzing emotions from audio, video, and text',
+                            tech: ['TensorFlow', 'Transformers', 'Flask', 'MongoDB', 'NLP'],
+                            highlights: [
+                                'Processed multi-modal data streams',
+                                'Transformer-based NLP feature extraction',
+                                'Flask and MongoDB for real-time processing',
+                                'Optimized accuracy through hyperparameter tuning'
+                            ]
+                        },
+                        {
+                            title: 'Data Quality & Analytics Pipeline',
+                            period: 'Jun 2025 - Jul 2025',
+                            description: 'Large-scale data validation and transformation at AssetPlus Consulting',
+                            tech: ['Excel', 'SQL', 'Python', 'Data Cleaning', 'ETL'],
+                            highlights: [
+                                'Audited large-scale datasets for quality assurance',
+                                'Executed data cleaning and transformation',
+                                'Database management and optimization',
+                                'Enabled data-driven business decisions'
+                            ]
+                        }
+                    ],
+                    experiences: [
+                        {
+                            title: 'Research Intern',
+                            company: 'IIRS, ISRO Dehradun',
+                            period: 'Jan 2026 - Present',
+                            description: [
+                                'Spearheaded crop water requirement prediction system using satellite data and geospatial analysis',
+                                'Architected end-to-end data pipelines using Google Earth Engine for large-scale Earth observation',
+                                'Orchestrated GIS layers and deployed geospatial services using GeoServer',
+                                'Formulated backend APIs for real-time irrigation and agricultural planning insights'
+                            ]
+                        },
+                        {
+                            title: 'Data Operations Intern',
+                            company: 'AssetPlus Consulting - Noida',
+                            period: 'Jun 2025 - Jul 2025',
+                            description: [
+                                'Audited and validated large-scale datasets ensuring data quality and consistency',
+                                'Executed data cleaning, transformation, and database management',
+                                'Facilitated analytics and reporting workflows for business intelligence'
+                            ]
+                        },
+                        {
+                            title: 'AI/ML Intern',
+                            company: 'Zidio Development - Bangalore',
+                            period: 'Feb 2025 - Mar 2025',
+                            description: [
+                                'Constructed multimodal emotion detection system using deep learning',
+                                'Engineered ML pipelines with TensorFlow and transformer-based NLP models',
+                                'Provisioned backend services using Flask and MongoDB',
+                                'Optimized model accuracy through data preprocessing and hyperparameter tuning'
+                            ]
+                        }
+                    ]
+                };
+            },
+            mounted() {
+                // Smooth scroll behavior already set in CSS
+                window.addEventListener('scroll', () => {
+                    const scrollTop = window.scrollY;
+                    this.showNav = scrollTop > 0 || window.innerWidth >= 768;
+                });
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

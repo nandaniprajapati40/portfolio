@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nandani's Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+        * {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: 'Poppins', sans-serif;
+            color: #f1f5f9;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            border-right: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #cbd5e1;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.1));
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(6, 182, 212, 0.1);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+        }
+
+        tr:hover {
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-new {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .status-reviewed {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+        }
+
+        .status-replied {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 116, 139, 0.3);
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid rgba(100, 116, 139, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 116, 139, 0.5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #06b6d4;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(6, 182, 212, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+                margin-bottom: 20px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="admin-app">
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-cyan-400">NP Admin</h2>
+                    <p class="text-sm text-slate-400">Portfolio Manager</p>
+                </div>
+
+                <div class="space-y-2">
+                    <div 
+                        class="sidebar-link" 
+                        :class="{ active: currentView === 'dashboard' }"
+                        @click="currentView = 'dashboard'"
+                    >
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div 
+                        class="sidebar-link" 
+                        :class="{ active: currentView === 'contacts' }"
+                        @click="currentView = 'contacts'"
+                    >
+                        <i class="fas fa-envelope w-5"></i>
+                        <span>Contacts ({{ contacts.length }})</span>
+                    </div>
+                    <div 
+                        class="sidebar-link" 
+                        :class="{ active: currentView === 'projects' }"
+                        @click="currentView = 'projects'"
+                    >
+                        <i class="fas fa-briefcase w-5"></i>
+                        <span>Projects</span>
+                    </div>
+                    <div 
+                        class="sidebar-link" 
+                        :class="{ active: currentView === 'skills' }"
+                        @click="currentView = 'skills'"
+                    >
+                        <i class="fas fa-star w-5"></i>
+                        <span>Skills</span>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-700">
+                    <button class="w-full text-left px-4 py-2 rounded-lg hover:bg-red-500/20 text-red-400 transition">
+                        <i class="fas fa-sign-out-alt mr-3"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Dashboard View -->
+                <div v-if="currentView === 'dashboard'">
+                    <div class="header">
+                        <h1>Dashboard</h1>
+                        <button class="btn-primary">
+                            <i class="fas fa-sync mr-2"></i>
+                            Refresh
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-slate-400 text-sm">Total Contacts</p>
+                                    <p class="text-3xl font-bold text-cyan-400">{{ stats.total_contacts }}</p>
+                                </div>
+                                <i class="fas fa-envelope text-4xl text-cyan-400 opacity-20"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-slate-400 text-sm">New Messages</p>
+                                    <p class="text-3xl font-bold text-blue-400">{{ newContactsCount }}</p>
+                                </div>
+                                <i class="fas fa-star text-4xl text-blue-400 opacity-20"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-slate-400 text-sm">Projects</p>
+                                    <p class="text-3xl font-bold text-purple-400">{{ stats.total_projects }}</p>
+                                </div>
+                                <i class="fas fa-briefcase text-4xl text-purple-400 opacity-20"></i>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-slate-400 text-sm">Skills</p>
+                                    <p class="text-3xl font-bold text-green-400">{{ stats.total_skills }}</p>
+                                </div>
+                                <i class="fas fa-code text-4xl text-green-400 opacity-20"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-4">Recent Contacts</h2>
+                        <div v-if="contacts.length === 0" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No contacts yet</p>
+                        </div>
+                        <div v-else class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="contact in contacts.slice(0, 5)" :key="contact._id">
+                                        <td>{{ contact.name }}</td>
+                                        <td>{{ contact.email }}</td>
+                                        <td>{{ formatDate(contact.timestamp) }}</td>
+                                        <td>
+                                            <span 
+                                                class="status-badge"
+                                                :class="'status-' + contact.status"
+                                            >
+                                                {{ contact.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="text-cyan-400 hover:text-cyan-300 transition">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacts View -->
+                <div v-if="currentView === 'contacts'">
+                    <div class="header">
+                        <h1>Contact Messages</h1>
+                        <div class="space-x-2">
+                            <button class="btn-secondary">Export CSV</button>
+                            <button class="btn-primary">Clear Spam</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div v-if="contacts.length === 0" class="empty-state">
+                            <i class="fas fa-envelope"></i>
+                            <p>No messages yet</p>
+                        </div>
+                        <div v-else class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Subject</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="contact in contacts" :key="contact._id">
+                                        <td class="font-semibold">{{ contact.name }}</td>
+                                        <td><a :href="'mailto:' + contact.email" class="text-cyan-400 hover:underline">{{ contact.email }}</a></td>
+                                        <td>{{ contact.phone || 'N/A' }}</td>
+                                        <td class="truncate max-w-xs">{{ contact.subject || 'N/A' }}</td>
+                                        <td class="text-sm text-slate-400">{{ formatDate(contact.timestamp) }}</td>
+                                        <td>
+                                            <select 
+                                                :value="contact.status"
+                                                @change="updateContactStatus(contact._id, $event.target.value)"
+                                                class="status-badge p-1 border-0 cursor-pointer"
+                                                :class="'status-' + contact.status"
+                                            >
+                                                <option value="new">New</option>
+                                                <option value="reviewed">Reviewed</option>
+                                                <option value="replied">Replied</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button class="text-cyan-400 hover:text-cyan-300 transition mr-3" @click="viewContactDetail(contact)">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="text-red-400 hover:text-red-300 transition">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects View -->
+                <div v-if="currentView === 'projects'">
+                    <div class="header">
+                        <h1>Projects</h1>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Project
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-for="project in projects" :key="project.title" class="card">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-bold text-cyan-400">{{ project.title }}</h3>
+                                <div class="space-x-2">
+                                    <button class="btn-secondary text-xs"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-secondary text-xs text-red-400"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-4">{{ project.description }}</p>
+                            <p class="text-slate-500 text-xs mb-3">{{ project.period }}</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="tech in project.tech" :key="tech" class="px-2 py-1 bg-slate-800 rounded text-xs text-cyan-300">
+                                    {{ tech }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills View -->
+                <div v-if="currentView === 'skills'">
+                    <div class="header">
+                        <h1>Skills</h1>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus mr-2"></i>
+                            Add Skill
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div v-for="(skills, category) in skillsByCategory" :key="category" class="card">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold text-cyan-400 capitalize">{{ category }}</h3>
+                                <button class="btn-secondary text-xs"><i class="fas fa-edit"></i></button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span v-for="skill in skills" :key="skill" class="px-3 py-1 bg-slate-800 rounded-full text-sm text-slate-300 flex items-center gap-2">
+                                    {{ skill }}
+                                    <button class="hover:text-red-400 transition"><i class="fas fa-times text-xs"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Detail Modal -->
+        <div class="modal" :class="{ show: showDetailModal }">
+            <div class="modal-content" v-if="selectedContact">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Message Details</h2>
+                    <button @click="showDetailModal = false" class="text-slate-400 hover:text-slate-200">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="text-sm text-slate-400">From</label>
+                        <p class="font-semibold">{{ selectedContact.name }}</p>
+                        <p class="text-cyan-400">{{ selectedContact.email }}</p>
+                    </div>
+                    <div v-if="selectedContact.phone">
+                        <label class="text-sm text-slate-400">Phone</label>
+                        <p class="font-semibold">{{ selectedContact.phone }}</p>
+                    </div>
+                    <div v-if="selectedContact.subject">
+                        <label class="text-sm text-slate-400">Subject</label>
+                        <p class="font-semibold">{{ selectedContact.subject }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400">Message</label>
+                        <p class="bg-slate-900 p-4 rounded text-slate-300 mt-2">{{ selectedContact.message }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm text-slate-400">Received</label>
+                        <p class="font-semibold">{{ formatDate(selectedContact.timestamp) }}</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button class="btn-primary flex-1">
+                        <i class="fas fa-reply mr-2"></i>
+                        Reply
+                    </button>
+                    <button class="btn-secondary flex-1" @click="showDetailModal = false">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    currentView: 'dashboard',
+                    showDetailModal: false,
+                    selectedContact: null,
+                    contacts: [],
+                    projects: [
+                        {
+                            title: "Irrigation Crop Water Requirements",
+                            description: "IIRS-ISRO Project: Satellite-driven system",
+                            period: "Jan 2026 - Present",
+                            tech: ["Google Earth Engine", "GeoServer", "Remote Sensing"]
+                        },
+                        {
+                            title: "AI-Powered Audiobook Generation",
+                            description: "GenAI pipeline converting ebooks to audiobooks",
+                            period: "Feb 2026 - Mar 2026",
+                            tech: ["LLM", "TTS", "Flask", "MongoDB"]
+                        },
+                        {
+                            title: "D-CAM Therapy Center Management",
+                            description: "Full-stack web application for management",
+                            period: "Oct 2025 - Nov 2025",
+                            tech: ["Flask", "MongoDB", "REST APIs"]
+                        },
+                        {
+                            title: "Domain-Specific Chatbot (RAG)",
+                            description: "LLM-powered chatbot with semantic search",
+                            period: "Apr 2025 - Jun 2025",
+                            tech: ["LangChain", "OpenAI", "MongoDB"]
+                        }
+                    ],
+                    skills: {
+                        programming: ["Python", "SQL", "JavaScript"],
+                        ml: ["TensorFlow", "Scikit-learn", "NLP", "Deep Learning"],
+                        frameworks: ["Flask", "NumPy", "Pandas", "Matplotlib"],
+                        geospatial: ["Google Earth Engine", "GeoServer", "QGIS"],
+                        databases: ["MongoDB", "MySQL"],
+                        tools: ["Git", "GitHub", "VS Code", "Jupyter"]
+                    },
+                    stats: {
+                        total_contacts: 0,
+                        total_projects: 4,
+                        total_skills: 22
+                    }
+                };
+            },
+            computed: {
+                newContactsCount() {
+                    return this.contacts.filter(c => c.status === 'new').length;
+                },
+                skillsByCategory() {
+                    return this.skills;
+                }
+            },
+            methods: {
+                formatDate(date) {
+                    if (!date) return 'N/A';
+                    return new Date(date).toLocaleDateString();
+                },
+                async loadContacts() {
+                    try {
+                        const response = await fetch('/api/contact/list');
+                        this.contacts = await response.json();
+                        this.stats.total_contacts = this.contacts.length;
+                    } catch (error) {
+                        console.error('Error loading contacts:', error);
+                    }
+                },
+                viewContactDetail(contact) {
+                    this.selectedContact = contact;
+                    this.showDetailModal = true;
+                },
+                async updateContactStatus(contactId, status) {
+                    try {
+                        await fetch(`/api/contact/${contactId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status })
+                        });
+                    } catch (error) {
+                        console.error('Error updating contact:', error);
+                    }
+                }
+            },
+            mounted() {
+                this.loadContacts();
+            }
+        }).mount('#admin-app');
+    </script>
+</body>
+</html>
