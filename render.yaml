@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: nandani-portfolio
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: FLASK_ENV
+        value: production
+      - key: MONGO_URI
+        scope: secret
+        value: # Add your MongoDB connection URI here
+    healthCheckPath: /health
+    healthCheckInterval: 30
